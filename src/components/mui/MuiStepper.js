@@ -8,8 +8,8 @@ import Typography from '@mui/material/Typography';
 
 
 export default function MuiStepper(props) {
-    const [activeStep, setActiveStep] = React.useState(0);
     const [skipped, setSkipped] = React.useState(new Set());
+    const {activeStep, setActiveStep} = props;
 
     const isStepOptional = (step) => {
         return step === 1;
@@ -32,21 +32,6 @@ export default function MuiStepper(props) {
 
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    };
-
-    const handleSkip = () => {
-        if (!isStepOptional(activeStep)) {
-            // You probably want to guard against something like this,
-            // it should never occur unless someone's actively trying to break something.
-            throw new Error("You can't skip a step that isn't optional.");
-        }
-
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-        setSkipped((prevSkipped) => {
-            const newSkipped = new Set(prevSkipped.values());
-            newSkipped.add(activeStep);
-            return newSkipped;
-        });
     };
 
     const handleReset = () => {
@@ -99,13 +84,7 @@ export default function MuiStepper(props) {
                             Geri
                         </Button>
                         <Box sx={{ flex: '1 1 auto' }} />
-                        {isStepOptional(activeStep) && (
-                            <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
-                                Atla
-                            </Button>
-                        )}
-
-                        <Button onClick={handleNext}>
+                        <Button onClick={handleNext} type={'submit'}>
                             {activeStep === props.stepTitles.length - 1 ? 'Bitir' : 'İleri'}
                         </Button>
                     </Box>

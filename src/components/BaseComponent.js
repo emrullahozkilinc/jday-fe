@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {createTheme, Grid, ThemeProvider, Typography} from "@mui/material";
 import {Form, Formik} from "formik";
 import MuiMiniCard from "./mui/MuiMiniCard";
@@ -9,6 +9,7 @@ import SubmissionForm3 from "./pages/SubmissionForm3";
 import SubmissionForm4 from "./pages/SubmissionForm4";
 import {FORM_STEP_TITLES} from "../constants/FormStepTitles";
 import initialValues from "../objects/FormikInitialValues"
+import validationSchema from "../objects/validationSchema";
 
 const font =  "'Fira Sans', sans-serif";
 const theme = createTheme({
@@ -27,17 +28,39 @@ const cardContents = [
     ["Konferans Ücreti:" , "2.999₺ + %18 Vat"]
 ];
 
-const handleSubmit = (values, actions) => {
-    return "";
-}
 
 function BaseComponent(props) {
+
+    const [activeStep, setActiveStep] = useState(0);
+
+    const currentValidationSchema = validationSchema[activeStep];
+
+    const handleSubmit = (values, actions) => {
+        if (isLastStep) {
+            submitForm(values, actions);
+        } else {
+            setActiveStep(activeStep + 1);
+            actions.setTouched({});
+            actions.setSubmitting(false);
+        }
+        return "";
+    }
+
+    const isLastStep = () => {
+        return activeStep === 3
+    }
+
+    const submitForm = (values, actions) => {
+
+    }
+
     return (
         <div className="App">
             <ThemeProvider theme={theme}>
                 <Grid className={"container"}>
                     <Formik
                         initialValues={ initialValues }
+                        validationSchema={ currentValidationSchema }
                         onSubmit={handleSubmit}
                     >
                         <Form style={{padding:100}}>
@@ -62,7 +85,7 @@ function BaseComponent(props) {
                             <br/>
                             <br/>
 
-                            <MuiStepper stepTitles={FORM_STEP_TITLES} >
+                            <MuiStepper stepTitles={FORM_STEP_TITLES} activeStep={activeStep} setActiveStep={setActiveStep}>
                                 <SubmissionForm1/>
                                 <SubmissionForm2/>
                                 <SubmissionForm3/>
